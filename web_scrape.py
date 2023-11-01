@@ -3,7 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 options = Options()
-options.headless = True
+options.add_argument('--headless')
 options.add_argument("--window-size=1920,1200")
 
 f = open("stock_market_company_names.txt", "a")
@@ -14,9 +14,9 @@ for page in range(2):
 
     driver.get(f"https://www.wsj.com/market-data/quotes/company-list/a-z/0-9/{page + 1}")
 
-    all_links = driver.find_elements(By.CLASS_NAME, 'cl-name')
+    all_names = driver.find_elements(By.XPATH, '/html/body/div[2]/section[1]/div/section/table/tbody')
 
-    for elem in all_links:
+    for elem in all_names:
         f.write(f"{elem.text}\n")
 
 
@@ -29,10 +29,9 @@ for item in alphabet:
 
         driver.get(f"https://www.wsj.com/market-data/quotes/company-list/a-z/{item[0].upper()}/{page + 1}")
 
-        all_links = driver.find_elements(By.CLASS_NAME, 'cl-name')
+        all_names = driver.find_elements(By.XPATH, '/html/body/div[2]/section[1]/div/section/table/tbody')
 
-        for elem in all_links:
-
+        for elem in all_names:
             f.write(f"{elem.text}\n")
 
 f.close()

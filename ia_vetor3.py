@@ -3,10 +3,8 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
-from sklearn.preprocessing import StandardScaler
 import ast
 import matplotlib.pyplot as plt
 import os
@@ -15,11 +13,9 @@ from index_values import index_values
 
 data_directory = "Dados_Funcionais_Clean"
 
-# Lists to store data from all files
 all_features = []
 all_targets = []
 
-# Loop through all files in the directory
 for filename in os.listdir(data_directory):
     file_path = os.path.join(data_directory, filename)
 
@@ -45,7 +41,7 @@ for filename in os.listdir(data_directory):
 
     clean_data_array = np.array(clean_data)
 
-    # Extract relevant columns for features and targets
+
     if len(clean_data_array) > 0:
         features = np.array(clean_data_array)[:, [1, 2, 5, 6, 7]]
         targets = np.array(clean_data_array)[:, 3]
@@ -56,7 +52,7 @@ for filename in os.listdir(data_directory):
 all_features = np.array(all_features)
 all_targets = np.array(all_targets)
 
-ranges = [(280.0, 400.0)]
+ranges = [(180.0, 400.0)]
 
 features_ranges = []
 targets_ranges = []
@@ -70,49 +66,47 @@ for start, end in ranges:
     targets_range = all_targets[mask]
 
 
-    # Split the combined data into training and testing sets
+
     X_train, X_test, y_train, y_test = train_test_split(
-        features_range, targets_range, test_size=0.1, random_state=43
+        features_range, targets_range, test_size=0.5, random_state=54
     )
 
 
-    # Initialize the model
-    model = RandomForestRegressor(n_estimators=100, random_state=42)
 
-    # Train the model
+    model = RandomForestRegressor(n_estimators=100, random_state=54)
+
+
     model.fit(X_train, y_train)
 
-    # Make predictions
+
     predictions = model.predict(X_test)
 
-    # Evaluate the model
+
     mse = mean_squared_error(y_test, predictions)
     mea = mean_absolute_error(y_test, predictions)
-    print(f'Mean Squared Error for all ranges: {mse}')
-    print(f'Mean Absolute Error for all ranges: {mea}')
+    print(f'Mean Squared Error: {mse}')
+    print(f'Mean Absolute Error: {mea}')
+
+    y_test = y_test.astype(float)
 
     result_df = pd.DataFrame({
-        'Predicted 7 days after': predictions,
-        'Actual 7 days after': y_test,
-
+        'Valor 7 Dias Antes': X_test[:, 1],
+        'Valor Estimado': predictions,
+        'Valor Real': y_test,
+        'Diferença Absoluta': np.round(np.abs(predictions - y_test), 4)
     })
 
-    result_df2 = pd.DataFrame({
-        '7 days before': X_test[:, 0],
-        'Predicted 7 days after': X_test[:, 1],
-        'Actual 7 days after': X_test[:, 2],
-
-    })
+    result_df.to_excel(f'Tabelas_Resultados/tabela_final.xlsx', index=False)
 
     pd.set_option('display.max_columns', None)
 
-    # Display the table
+
     print(result_df)
 
-    # Plotting
     plt.figure(figsize=(12, 6))
     plt.scatter(y_test, predictions)
-    plt.xlabel("Actual Values")
-    plt.ylabel("Predicted Values")
-    plt.title("Actual vs. Predicted Values for all ranges")
+    plt.xlabel("Valor Real")
+    plt.ylabel("Valor Estimado")
+    plt.title("Valor Real vs. Valor Estimado")
+    plt.xticks(np.linspace(min(y_test), max(y_test), 10))
     plt.show()

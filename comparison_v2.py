@@ -43,16 +43,15 @@ for lista in lista_unica:
 for i in range(1346 - 843):
     print(lista_result[i + 843])
 
-# print(lista_result.index([['ndi engineering co', 'NDI ENGINEERING COMPANY'], ['austin engineering co', 'Austin Engineering Co. Ltd. (522005) India XBOM Industrial Machinery'], 82]))
 
-# f2 = open("filtro_empresas_limpo.txt", "a")
-# f3 = open("filtro_empresas_sujo.txt", "a")
-#
-# for i in range(843 - 715):
-#     f2.write(f"{[lista_result[i + 715][0][1], lista_result[i + 715][1][1]]}\n")
-#
-# for i in range(1346 - 715):
-#     f3.write(f"{[lista_result[i + 715][0][1], lista_result[i + 715][1][1]]}\n")
-#
-# f2.close()
-# f3.close()
+f2 = open("filtro_empresas_limpo.txt", "a")
+f3 = open("filtro_empresas_sujo.txt", "a")
+
+for i in range(843):
+    f2.write(f"{[lista_result[i + 715][0][1], lista_result[i + 715][1][1]]}\n")
+
+for i in range(1346 - 843):
+    f3.write(f"{[lista_result[i + 715][0][1], lista_result[i + 715][1][1]]}\n")
+
+f1.close()
+
